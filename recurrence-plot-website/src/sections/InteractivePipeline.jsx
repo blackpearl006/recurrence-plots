@@ -9,19 +9,20 @@ import { InlineMath, BlockMath } from 'react-katex';
 
 const InteractivePipeline = () => {
     const [tau, setTau] = useState(10);
+    const [signalType, setSignalType] = useState('lorenz');
     const [signal, setSignal] = useState([]);
     const [isDark, setIsDark] = useState(false);
 
-    // Generate a Lorenz attractor signal for the demo
+    // Generate signal when type changes
     useEffect(() => {
-        const data = generateSignal('lorenz', 500, 0.05, 0);
+        const data = generateSignal(signalType, 500, 0.05, 0);
         setSignal(data);
+    }, [signalType]);
 
-        // Check for dark mode
+    // Check for dark mode
+    useEffect(() => {
         const checkDark = () => setIsDark(document.documentElement.classList.contains('dark'));
         checkDark();
-
-        // Listen for theme changes
         const observer = new MutationObserver(checkDark);
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
         return () => observer.disconnect();
@@ -58,6 +59,29 @@ const InteractivePipeline = () => {
 
             {/* Controls */}
             <div className="max-w-2xl mx-auto mb-12 bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+
+                {/* Signal Selector */}
+                <div className="flex justify-center gap-4 mb-8">
+                    <button
+                        onClick={() => setSignalType('lorenz')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${signalType === 'lorenz'
+                            ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        Lorenz Attractor (Chaotic)
+                    </button>
+                    <button
+                        onClick={() => setSignalType('sine')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${signalType === 'sine'
+                            ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
+                            : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                            }`}
+                    >
+                        Sine Wave (Periodic)
+                    </button>
+                </div>
+
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                         <SlidersHorizontal size={20} />
@@ -134,8 +158,8 @@ const InteractivePipeline = () => {
                             <Grid size={18} className="text-indigo-500" />
                             3. Recurrence Plot
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
-                            Distances in 3D space are visualized as a 2D plot.
+                        <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                            {signalType === 'lorenz' ? 'Lorenz System (X-component)' : 'Sine Wave (Simple Periodic)'}
                         </p>
                         <div className="flex-1 min-h-[200px] bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 p-2 flex items-center justify-center">
                             {rpData && (
