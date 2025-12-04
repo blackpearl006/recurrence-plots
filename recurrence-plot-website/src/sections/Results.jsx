@@ -23,8 +23,8 @@ const Results = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === tab
-                                    ? 'bg-white text-slate-900 shadow-sm'
-                                    : 'text-slate-500 hover:text-slate-700'
+                                ? 'bg-white text-slate-900 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700'
                                 }`}
                         >
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -41,7 +41,7 @@ const Results = () => {
                                 <div className="absolute top-4 left-4 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-green-700 shadow-sm">
                                     HEALTHY CONTROL
                                 </div>
-                                <img src="/assets/HEALTHY.png" alt="Healthy Recurrence Plot" className="w-full rounded-xl shadow-sm mix-blend-multiply" />
+                                <img src={`${import.meta.env.BASE_URL}assets/HEALTHY.png`} alt="Healthy Recurrence Plot" className="w-full rounded-xl shadow-sm mix-blend-multiply" />
                             </div>
                             <h3 className="text-xl font-bold text-slate-900 mb-2">Structured & Modular</h3>
                             <p className="text-slate-500 text-sm max-w-xs mx-auto">
@@ -54,7 +54,7 @@ const Results = () => {
                                 <div className="absolute top-4 left-4 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-red-700 shadow-sm">
                                     MCI PATIENT
                                 </div>
-                                <img src="/assets/MCI.png" alt="MCI Recurrence Plot" className="w-full rounded-xl shadow-sm mix-blend-multiply" />
+                                <img src={`${import.meta.env.BASE_URL}assets/MCI.png`} alt="MCI Recurrence Plot" className="w-full rounded-xl shadow-sm mix-blend-multiply" />
                             </div>
                             <h3 className="text-xl font-bold text-slate-900 mb-2">Rigid & Slow</h3>
                             <p className="text-slate-500 text-sm max-w-xs mx-auto">
@@ -108,7 +108,7 @@ const Results = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                             <h4 className="font-bold text-slate-900 mb-4 text-center">Traditional RQA Features</h4>
-                            <img src="/assets/DMN_RQA_TSNE.png" alt="RQA t-SNE" className="w-full rounded-lg" />
+                            <img src={`${import.meta.env.BASE_URL}assets/DMN_RQA_TSNE.png`} alt="RQA t-SNE" className="w-full rounded-lg" />
                             <div className="mt-4 flex items-center justify-center gap-2 text-amber-600 bg-amber-50 px-4 py-2 rounded-full text-sm font-medium mx-auto w-fit">
                                 <AlertCircle size={16} />
                                 <span>Significant Overlap</span>
@@ -117,7 +117,7 @@ const Results = () => {
 
                         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm ring-2 ring-blue-100">
                             <h4 className="font-bold text-slate-900 mb-4 text-center">Proposed Latent Embeddings</h4>
-                            <img src="/assets/t-SNE.png" alt="Latent Space t-SNE" className="w-full rounded-lg" />
+                            <img src={`${import.meta.env.BASE_URL}assets/t-SNE.png`} alt="Latent Space t-SNE" className="w-full rounded-lg" />
                             <div className="mt-4 flex items-center justify-center gap-2 text-green-600 bg-green-50 px-4 py-2 rounded-full text-sm font-medium mx-auto w-fit">
                                 <CheckCircle size={16} />
                                 <span>Clear Separation</span>

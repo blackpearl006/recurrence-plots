@@ -47,7 +47,7 @@ const ResearchContext = () => {
                     <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-teal-100 rounded-3xl transform rotate-3 scale-105 opacity-50" />
                     <div className="relative bg-white p-4 rounded-3xl shadow-xl border border-slate-100 overflow-hidden">
                         <img
-                            src="/assets/FlowDiagram.png"
+                            src={`${import.meta.env.BASE_URL}assets/FlowDiagram.png`}
                             alt="Research Methodology Flow"
                             className="w-full h-auto rounded-xl"
                         />

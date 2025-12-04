@@ -55,7 +55,7 @@ const Methodology = () => {
                         <span className="w-2 h-2 rounded-full bg-indigo-500" />
                         Recurrence Visualization
                     </h4>
-                    <img src="/assets/RecVIZ.png" alt="Recurrence Plot Visualization" className="w-full rounded-lg" />
+                    <img src={`${import.meta.env.BASE_URL}assets/RecVIZ.png`} alt="Recurrence Plot Visualization" className="w-full rounded-lg" />
                     <p className="text-sm text-slate-400 mt-4 text-center">
                         Transformation of time series state vectors into a 2D distance matrix.
                     </p>
@@ -66,7 +66,7 @@ const Methodology = () => {
                         <span className="w-2 h-2 rounded-full bg-teal-500" />
                         Autoencoder Architecture
                     </h4>
-                    <img src="/assets/Autoencoder.png" alt="Autoencoder Architecture" className="w-full rounded-lg" />
+                    <img src={`${import.meta.env.BASE_URL}assets/Autoencoder.png`} alt="Autoencoder Architecture" className="w-full rounded-lg" />
                     <p className="text-sm text-slate-400 mt-4 text-center">
                         Convolutional Autoencoder trained to minimize reconstruction loss + MSSIM.
                     </p>
