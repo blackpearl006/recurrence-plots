@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Section from '../components/Section';
 import PhaseSpaceViz from '../components/PhaseSpaceViz';
 import TimeSeriesPlot from '../components/TimeSeriesPlot';
-import { generateSignal } from '../utils/signal';
-import { SlidersHorizontal, Activity, Box } from 'lucide-react';
+import RecurrencePlotCanvas from '../components/RecurrencePlotCanvas';
+import { generateSignal, computeRecurrenceMatrix } from '../utils/signal';
+import { SlidersHorizontal, Activity, Box, ArrowRight, Grid } from 'lucide-react';
 import { InlineMath, BlockMath } from 'react-katex';
 
 const InteractivePipeline = () => {
@@ -26,6 +27,14 @@ const InteractivePipeline = () => {
         return () => observer.disconnect();
     }, []);
 
+    // Compute RP matrix based on current signal and tau
+    const rpData = useMemo(() => {
+        if (!signal.length) return null;
+        // Use a subset for RP to keep it fast
+        const subset = signal.slice(0, 200);
+        return computeRecurrenceMatrix(subset, 3, tau, 0.1); // m=3, threshold=0.1
+    }, [signal, tau]);
+
     // Don't render until signal is loaded
     if (!signal || signal.length === 0) {
         return (
@@ -41,80 +50,107 @@ const InteractivePipeline = () => {
     return (
         <Section id="pipeline" className="bg-white dark:bg-slate-950 transition-colors duration-300">
             <div className="text-center mb-12">
-                <span className="text-teal-600 dark:text-teal-400 font-medium text-sm uppercase tracking-wider">The Gemini Showcase</span>
-                <h2 className="text-4xl font-bold mt-2 mb-4 text-slate-900 dark:text-white">Interactive Phase Space</h2>
-                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-                    Experience how we unfold 1D time series into 3D structures. Adjust the Time Delay (<span className="font-mono">τ</span>) to see how it affects the reconstruction.
+                <h2 className="text-4xl font-bold mt-2 mb-4 text-slate-900 dark:text-white">From 1D Signal to Recurrence</h2>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                    See how the Time Delay (<span className="font-mono">τ</span>) extracts hidden 3D structure from 1D data, which is then captured in the Recurrence Plot.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-                {/* Controls */}
-                <div className="lg:col-span-1 space-y-6">
-                    <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <SlidersHorizontal size={20} />
-                            Parameters
-                        </h3>
+            {/* Controls */}
+            <div className="max-w-2xl mx-auto mb-12 bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <SlidersHorizontal size={20} />
+                        Adjust Time Delay (<InlineMath math="\tau" />)
+                    </h3>
+                    <span className="text-2xl font-mono font-bold text-teal-600 dark:text-teal-400">{tau}</span>
+                </div>
+                <input
+                    type="range"
+                    min="1"
+                    max="50"
+                    value={tau}
+                    onChange={(e) => setTau(parseInt(e.target.value))}
+                    className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-teal-500"
+                />
+                <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-2">
+                    <span>Compressed (Low <InlineMath math="\tau" />)</span>
+                    <span>Optimal Unfolding</span>
+                    <span>Disconnected (High <InlineMath math="\tau" />)</span>
+                </div>
+            </div>
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-                                    Time Delay (τ): {tau}
-                                </label>
-                                <input
-                                    type="range"
-                                    min="1"
-                                    max="50"
-                                    value={tau}
-                                    onChange={(e) => setTau(parseInt(e.target.value))}
-                                    className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-teal-500"
-                                />
-                                <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
-                                    Optimal τ unfolds the attractor. Too low = compressed diagonal. Too high = disconnected.
-                                </p>
+            {/* Unified Dashboard */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-stretch">
+
+                {/* 1. Time Series */}
+                <div className="flex flex-col">
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
+                        <h3 className="text-md font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <Activity size={18} className="text-blue-500" />
+                            1. Input Signal
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                            We pick 3 points separated by <InlineMath math="\tau" /> to form a vector.
+                        </p>
+                        <div className="flex-1 min-h-[200px] bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 p-2 relative">
+                            <TimeSeriesPlot signal={signal.slice(0, 200)} tau={tau} color={isDark ? '#94a3b8' : '#64748b'} />
+                            {/* Legend */}
+                            <div className="absolute top-2 right-2 flex flex-col gap-1 text-[10px] bg-white/80 dark:bg-slate-900/80 p-1 rounded border border-slate-200 dark:border-slate-700">
+                                <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div> x(t)</div>
+                                <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div> x(t+τ)</div>
+                                <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-500"></div> x(t+2τ)</div>
                             </div>
                         </div>
                     </div>
+                    <div className="h-8 flex items-center justify-center text-slate-300 dark:text-slate-700 lg:rotate-0 rotate-90">
+                        <ArrowRight size={24} />
+                    </div>
+                </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
-                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Activity size={20} />
-                            1. Input Signal
+                {/* 2. Phase Space */}
+                <div className="flex flex-col">
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
+                        <h3 className="text-md font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <Box size={18} className="text-teal-500" />
+                            2. Phase Space (3D)
                         </h3>
-                        <div className="h-32 w-full bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 p-2 mb-2">
-                            <TimeSeriesPlot signal={signal.slice(0, 200)} color={isDark ? '#2dd4bf' : '#4f46e5'} />
-                        </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                            Lorenz System (X-component)
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                            The vectors <InlineMath math="[x(t), x(t+\tau), x(t+2\tau)]" /> trace a trajectory.
                         </p>
+                        <div className="flex-1 min-h-[200px] rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 relative">
+                            <PhaseSpaceViz signal={signal} tau={tau} isDark={isDark} />
+                        </div>
                     </div>
-
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-2xl border border-blue-100 dark:border-blue-800">
-                        <h4 className="font-bold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
-                            <Box size={20} />
-                            2. Sliding Window Embedding
-                        </h4>
-                        <p className="text-sm text-blue-800 dark:text-blue-400 mb-4">
-                            We reconstruct the hidden 3D geometry by creating vectors from time-delayed samples:
-                        </p>
-                        <div className="bg-white/50 dark:bg-slate-900/50 p-3 rounded-lg text-center overflow-x-auto">
-                            <BlockMath math="\vec{v}(t) = [x(t), x(t+\tau), x(t+2\tau)]" />
-                        </div>
-                        <div className="mt-4 text-xs text-blue-700 dark:text-blue-300">
-                            <ul className="list-disc pl-4 space-y-1">
-                                <li><strong>x(t)</strong>: Current value</li>
-                                <li><strong>x(t+τ)</strong>: Value <InlineMath math="\tau" /> steps ahead</li>
-                                <li><strong>x(t+2τ)</strong>: Value <InlineMath math="2\tau" /> steps ahead</li>
-                            </ul>
-                        </div>
+                    <div className="h-8 flex items-center justify-center text-slate-300 dark:text-slate-700 lg:rotate-0 rotate-90">
+                        <ArrowRight size={24} />
                     </div>
                 </div>
 
-                {/* Visualization */}
-                <div className="lg:col-span-2">
-                    <PhaseSpaceViz signal={signal} tau={tau} isDark={isDark} />
+                {/* 3. Recurrence Plot */}
+                <div className="flex flex-col">
+                    <div className="flex-1 bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col">
+                        <h3 className="text-md font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                            <Grid size={18} className="text-indigo-500" />
+                            3. Recurrence Plot
+                        </h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+                            Distances in 3D space are visualized as a 2D plot.
+                        </p>
+                        <div className="flex-1 min-h-[200px] bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 p-2 flex items-center justify-center">
+                            {rpData && (
+                                <RecurrencePlotCanvas
+                                    matrix={rpData.binary}
+                                    width={250}
+                                    height={250}
+                                    color={isDark ? '#2dd4bf' : '#4f46e5'}
+                                />
+                            )}
+                        </div>
+                    </div>
+                    <div className="h-8 lg:hidden"></div>
                 </div>
+
             </div>
         </Section>
     );
