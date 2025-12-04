@@ -1,6 +1,7 @@
 import React from 'react';
 import Section from '../components/Section';
 import { ArrowRight, Layers, Database, Cpu } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Methodology = () => {
     const steps = [
@@ -25,27 +26,34 @@ const Methodology = () => {
     ];
 
     return (
-        <Section id="methodology" className="bg-slate-50">
+        <Section id="methodology" className="bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
             <div className="text-center mb-16">
-                <span className="text-indigo-600 font-medium text-sm uppercase tracking-wider">The Pipeline</span>
-                <h2 className="text-4xl font-bold mt-2 mb-4 text-slate-900">From Signal to Symptom</h2>
-                <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                <span className="text-indigo-600 dark:text-indigo-400 font-medium text-sm uppercase tracking-wider">The Pipeline</span>
+                <h2 className="text-4xl font-bold mt-2 mb-4 text-slate-900 dark:text-white">From Signal to Symptom</h2>
+                <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
                     We transform complex temporal dynamics into spatial patterns that deep learning models can understand.
                 </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
                 {steps.map((step, i) => (
-                    <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 relative overflow-hidden group hover:shadow-md transition-all">
-                        <div className={`absolute top-0 right-0 p-4 opacity-10 text-${step.color}-600 transform scale-150 group-hover:scale-125 transition-transform`}>
+                    <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.2, duration: 0.5 }}
+                        className="bg-white dark:bg-slate-950 p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group hover:shadow-md transition-all"
+                    >
+                        <div className={`absolute top-0 right-0 p-4 opacity-10 text-${step.color}-600 dark:text-${step.color}-400 transform scale-150 group-hover:scale-125 transition-transform`}>
                             {step.icon}
                         </div>
-                        <div className={`w-12 h-12 bg-${step.color}-100 text-${step.color}-600 rounded-xl flex items-center justify-center mb-6`}>
+                        <div className={`w-12 h-12 bg-${step.color}-100 dark:bg-${step.color}-900/30 text-${step.color}-600 dark:text-${step.color}-400 rounded-xl flex items-center justify-center mb-6`}>
                             {step.icon}
                         </div>
-                        <h3 className="text-xl font-bold text-slate-900 mb-3">{step.title}</h3>
-                        <p className="text-slate-500 leading-relaxed">{step.desc}</p>
-                    </div>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{step.title}</h3>
+                        <p className="text-slate-500 dark:text-slate-400 leading-relaxed">{step.desc}</p>
+                    </motion.div>
                 ))}
             </div>
 
