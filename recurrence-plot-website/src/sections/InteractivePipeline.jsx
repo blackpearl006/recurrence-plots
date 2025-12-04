@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Section from '../components/Section';
 import PhaseSpaceViz from '../components/PhaseSpaceViz';
 import { generateSignal } from '../utils/signal';
-import { Slider } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
 
 const InteractivePipeline = () => {
     const [tau, setTau] = useState(10);
@@ -39,7 +39,7 @@ const InteractivePipeline = () => {
                 <div className="lg:col-span-1 space-y-6">
                     <div className="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
                         <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                            <Slider size={20} />
+                            <SlidersHorizontal size={20} />
                             Parameters
                         </h3>
 
