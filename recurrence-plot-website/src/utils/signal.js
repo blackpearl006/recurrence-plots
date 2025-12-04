@@ -20,6 +20,9 @@ export const generateSignal = (type, length = 150, frequency = 0.05, noiseLevel 
         case 'intermittent':
             signal = generateIntermittent(length);
             break;
+        case 'rossler':
+            signal = generateRossler(length);
+            break;
         case 'quasiperiodic':
             signal = t.map(i => Math.sin(2 * Math.PI * 0.05 * i) + Math.sin(2 * Math.PI * 0.05 * 1.414 * i));
             break;
@@ -48,6 +51,33 @@ const generateLorenz = (n) => {
         y += (x * (rho - z) - y) * dt;
         z += (x * y - beta * z) * dt;
         if (i % 10 === 0) result.push(x);
+    }
+    const min = Math.min(...result), max = Math.max(...result);
+    return result.map(v => (v - min) / (max - min) * 2 - 1);
+};
+
+const generateRossler = (n) => {
+    const a = 0.2, b = 0.2, c = 5.7, dt = 0.05;
+    let x = 1, y = 1, z = 1;
+    const result = [];
+    // Burn-in
+    for (let i = 0; i < 1000; i++) {
+        let dx = -y - z;
+        let dy = x + a * y;
+        let dz = b + z * (x - c);
+        x += dx * dt;
+        y += dy * dt;
+        z += dz * dt;
+    }
+    // Generate
+    for (let i = 0; i < n * 5; i++) {
+        let dx = -y - z;
+        let dy = x + a * y;
+        let dz = b + z * (x - c);
+        x += dx * dt;
+        y += dy * dt;
+        z += dz * dt;
+        if (i % 5 === 0) result.push(x);
     }
     const min = Math.min(...result), max = Math.max(...result);
     return result.map(v => (v - min) / (max - min) * 2 - 1);

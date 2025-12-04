@@ -69,16 +69,16 @@ const InteractivePipeline = () => {
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                             }`}
                     >
-                        Lorenz Attractor (Chaotic)
+                        Lorenz (Butterfly)
                     </button>
                     <button
-                        onClick={() => setSignalType('sine')}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${signalType === 'sine'
+                        onClick={() => setSignalType('rossler')}
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${signalType === 'rossler'
                             ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30'
                             : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                             }`}
                     >
-                        Sine Wave (Periodic)
+                        Rössler (Folded Band)
                     </button>
                 </div>
 
@@ -159,7 +159,7 @@ const InteractivePipeline = () => {
                             3. Recurrence Plot
                         </h3>
                         <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-                            {signalType === 'lorenz' ? 'Lorenz System (X-component)' : 'Sine Wave (Simple Periodic)'}
+                            {signalType === 'lorenz' ? 'Lorenz System (X-component)' : 'Rössler System (X-component)'}
                         </p>
                         <div className="flex-1 min-h-[200px] bg-white dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 p-2 flex items-center justify-center">
                             {rpData && (
